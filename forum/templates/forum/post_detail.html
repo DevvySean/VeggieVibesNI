@@ -1,0 +1,57 @@
+{% extends 'forum/base.html' %}
+
+{% block title %}{{ post.title }} - VeggieVibesNI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 1rem;">
+    <a href="{% url 'category_detail' post.category.slug %}" style="color: #3d6d22; text-decoration: none;">
+        ← Back to {{ post.category.name }}
+    </a>
+</div>
+
+<div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 2rem;">
+    <h2 style="color: #2d5016; margin-bottom: 1rem;">{{ post.title }}</h2>
+    <p style="font-size: 0.9rem; color: #999; margin-bottom: 1.5rem;">
+        Posted by {{ post.author.username }} • {{ post.created_at|date:"F d, Y" }} • {{ post.views }} views
+    </p>
+    <div style="line-height: 1.8; white-space: pre-wrap;">{{ post.content }}</div>
+</div>
+
+<div style="margin-bottom: 2rem;">
+    <h3 style="margin-bottom: 1rem;">Replies ({{ replies.count }})</h3>
+    
+    {% if replies %}
+        {% for reply in replies %}
+            <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 1rem;">
+                <p style="font-size: 0.9rem; color: #999; margin-bottom: 1rem;">
+                    {{ reply.author.username }} • {{ reply.created_at|date:"F d, Y H:i" }}
+                </p>
+                <div style="line-height: 1.8; white-space: pre-wrap;">{{ reply.content }}</div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="background: white; padding: 1.5rem; border-radius: 8px; text-align: center; color: #666;">
+            No replies yet. Be the first to reply!
+        </p>
+    {% endif %}
+</div>
+
+{% if user.is_authenticated %}
+    <div style="background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <h3 style="margin-bottom: 1rem;">Add a Reply</h3>
+        <form method="post" action="{% url 'create_reply' post.id %}">
+            {% csrf_token %}
+            <div style="margin-bottom: 1rem;">
+                <textarea name="content" rows="6" required 
+                    style="width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-family: inherit;"
+                    placeholder="Share your thoughts..."></textarea>
+            </div>
+            <button type="submit" class="btn">Post Reply</button>
+        </form>
+    </div>
+{% else %}
+    <p style="text-align: center; color: #666;">
+        <a href="/admin/login/">Login</a> to reply to this post
+    </p>
+{% endif %}
+{% endblock %}

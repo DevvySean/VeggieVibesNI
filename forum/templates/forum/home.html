@@ -1,0 +1,64 @@
+{% extends 'forum/base.html' %}
+
+{% block title %}Home - VeggieVibesNI{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <h2 style="color: #2d5016; margin-bottom: 1rem;">Welcome to VeggieVibesNI!</h2>
+    <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">
+        Join our community of vegetable growers sharing knowledge, tips, and success stories 
+        about growing veg in Northern Ireland's unique climate.
+    </p>
+</div>
+
+<div style="margin-bottom: 3rem;">
+    <h3 style="margin-bottom: 1rem;">Categories</h3>
+    {% if categories %}
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem;">
+            {% for category in categories %}
+                <div style="background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h4 style="margin-bottom: 0.5rem;">
+                        <a href="{% url 'category_detail' category.slug %}" style="color: #2d5016; text-decoration: none;">
+                            {{ category.name }}
+                        </a>
+                    </h4>
+                    <p style="color: #666; margin-bottom: 1rem;">{{ category.description }}</p>
+                    <p style="font-size: 0.9rem; color: #999;">{{ category.posts.count }} posts</p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="background: white; padding: 2rem; border-radius: 8px; text-align: center; color: #666;">
+            No categories yet. Check back soon!
+        </p>
+    {% endif %}
+</div>
+
+<div>
+    <h3 style="margin-bottom: 1rem;">Recent Posts</h3>
+    {% if recent_posts %}
+        <div style="background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            {% for post in recent_posts %}
+                <div style="padding: 1rem; border-bottom: 1px solid #eee;">
+                    <h4 style="margin-bottom: 0.5rem;">
+                        <a href="{% url 'post_detail' post.id %}" style="color: #2d5016; text-decoration: none;">
+                            {{ post.title }}
+                        </a>
+                    </h4>
+                    <p style="font-size: 0.9rem; color: #666;">
+                        by {{ post.author.username }} in 
+                        <a href="{% url 'category_detail' post.category.slug %}" style="color: #3d6d22;">
+                            {{ post.category.name }}
+                        </a>
+                        • {{ post.created_at|timesince }} ago • {{ post.views }} views • {{ post.get_reply_count }} replies
+                    </p>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="background: white; padding: 2rem; border-radius: 8px; text-align: center; color: #666;">
+            No posts yet. Be the first to share your growing experience!
+        </p>
+    {% endif %}
+</div>
+{% endblock %}
